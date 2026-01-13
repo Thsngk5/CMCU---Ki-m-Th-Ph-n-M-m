@@ -1,3 +1,4 @@
+
 describe('Cart Test', () => {
   beforeEach(() => {
     cy.visit('https://www.saucedemo.com');
@@ -9,5 +10,10 @@ describe('Cart Test', () => {
   it('Should add a product to the cart', () => {
     cy.get('.inventory_item').first().find('.btn_inventory').click();
     cy.get('.shopping_cart_badge').should('have.text', '1');
+  });
+
+  it('Should sort products by price low to high', () => {
+    cy.get('.product_sort_container').select('lohi');
+    cy.get('.inventory_item_price').first().should('have.text', '$7.99');
   });
 });
