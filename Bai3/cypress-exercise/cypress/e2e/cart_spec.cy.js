@@ -26,4 +26,20 @@ describe('Cart Test', () => {
     cy.get('.shopping_cart_badge').should('not.exist');
   });
 
+  it('Should complete checkout step one successfully', () => {
+    cy.get('.inventory_item').first().find('.btn_inventory').click();
+
+    cy.get('.shopping_cart_link').click();
+
+    cy.get('#checkout').click();
+
+    cy.get('#first-name').type('John');
+    cy.get('#last-name').type('Doe');
+    cy.get('#postal-code').type('12345');
+
+    cy.get('#continue').click();
+
+    cy.url().should('include', '/checkout-step-two.html');
+  });
+
 });
