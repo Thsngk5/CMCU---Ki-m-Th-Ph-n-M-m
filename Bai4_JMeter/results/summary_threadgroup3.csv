@@ -1,0 +1,4 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+Read Article 1,1092,541,60,2017,223.43,0.000%,18.12057,5643.54,2.23,318918.4
+Read Article 2,1082,477,60,1726,187.93,0.000%,17.97790,4862.79,2.25,276978.8
+TOTAL,2174,509,60,2017,209.01,0.000%,36.04709,10491.85,4.47,298045.0
