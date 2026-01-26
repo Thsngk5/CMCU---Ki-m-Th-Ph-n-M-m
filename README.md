@@ -10,117 +10,135 @@ Hình ảnh kết quả đánh giá giao diện người dùng trên website Can
 
 ---
 
-## Bài 2: Bài tập thực hành kiểm thử với JUnit
+## Bài 2: Thực hành kiểm thử đơn vị với JUnit
 
-### 1. Mô tả bài toán
+## 1. Mô tả bài toán
 
-Xây dựng chương trình Java để phân tích dữ liệu điểm số của học sinh, bao gồm các chức năng sau:
+Xây dựng chương trình Java để phân tích dữ liệu điểm số của học sinh, bao gồm hai chức năng chính:
 
-* Đếm số học sinh đạt loại Giỏi (điểm ≥ 8.0)
-* Tính điểm trung bình của các điểm hợp lệ (từ 0 đến 10)
+- `countExcellentStudents(List<Double> scores)`  
+  Đếm số học sinh có điểm từ 8.0 trở lên (excellent).
 
-Lưu ý:
-
-* Các điểm không hợp lệ (nhỏ hơn 0 hoặc lớn hơn 10) sẽ bị bỏ qua
-* Nếu danh sách điểm rỗng hoặc không có điểm hợp lệ, kết quả trả về là `0`
-
----
-
-### 2. Công nghệ sử dụng
-
-| Thành phần         | Công nghệ               |
-| ------------------ | ----------------------- |
-| Ngôn ngữ lập trình | Java                    |
-| Kiểm thử đơn vị    | JUnit 5 (JUnit Jupiter) |
-| IDE                | Visual Studio Code      |
-| Quản lý thư viện   | Maven                   |
-| Quản lý mã nguồn   | GitHub                  |
+- `calculateValidAverage(List<Double> scores)`  
+  Tính điểm trung bình của các điểm hợp lệ trong danh sách.  
+  Điểm hợp lệ nằm trong khoảng từ 0 đến 10.  
+  Nếu danh sách rỗng hoặc không có điểm hợp lệ thì trả về 0.
 
 ---
 
-### 3. Cấu trúc thư mục dự án
+## 2. Các kỹ thuật thiết kế test case
 
-```
-unit-test/
-├── src/
-│ ├── main/
-│ │ └── java/
-│ │ └── StudentAnalyzer.java
-│ └── test/
-│ └── java/
-│ └── StudentAnalyzerTest.java
-├── pom.xml
-└── README.md
-```
+Trong lớp `StudentAnalyzerTest`, các test case được thiết kế dựa trên ba kỹ thuật kiểm thử hộp đen phổ biến:
+
+- Phân vùng tương đương (Equivalence Partitioning)
+- Phân tích giá trị biên (Boundary Value Analysis – BVA)
+- Kiểm thử dựa trên bảng quyết định (Decision Table Testing)
 
 ---
 
-### 4. Nội dung chính
+## 2.1. Phân vùng tương đương (Equivalence Partitioning)
 
-#### 4.1. Lớp StudentAnalyzer
+Miền dữ liệu đầu vào được chia thành các lớp tương đương sau:
 
-Lớp này chịu trách nhiệm xử lý logic nghiệp vụ, bao gồm hai phương thức chính:
+### Đối với giá trị điểm số
+- Điểm hợp lệ: 0 ≤ score ≤ 10
+- Điểm không hợp lệ: score < 0 hoặc score > 10
+- Điểm excellent: score ≥ 8.0
 
-* `countExcellentStudents(List<Double> scores)`
-  Đếm số học sinh có điểm lớn hơn hoặc bằng 8.0
+### Đối với danh sách điểm
+- Danh sách rỗng
+- Danh sách không rỗng
 
-* `calculateValidAverage(List<Double> scores)`
-  Tính điểm trung bình của các điểm hợp lệ
+Mỗi lớp tương đương được đại diện bởi ít nhất một test case nhằm đảm bảo hành vi của chương trình được kiểm tra đầy đủ mà không cần kiểm thử mọi giá trị có thể.
 
-Cả hai phương thức đều thực hiện kiểm tra dữ liệu đầu vào và chỉ xử lý các điểm nằm trong khoảng từ 0 đến 10.
-
----
-
-#### 4.2. Lớp kiểm thử StudentAnalyzerTest
-
-Lớp này chứa các test case để kiểm thử cho lớp StudentAnalyzer, bao gồm:
-
-* Trường hợp dữ liệu bình thường
-* Trường hợp biên (0, 10, danh sách rỗng)
-* Trường hợp dữ liệu không hợp lệ (nhỏ hơn 0, lớn hơn 10)
+Các test case trong lớp `StudentAnalyzerTest` đã bao phủ đầy đủ các lớp tương đương này, bao gồm:
+- Chỉ chứa điểm hợp lệ
+- Chỉ chứa điểm không hợp lệ
+- Kết hợp điểm hợp lệ và không hợp lệ
+- Danh sách rỗng
 
 ---
 
-### 5. Hướng dẫn chạy kiểm thử đơn vị
+## 2.2. Phân tích giá trị biên (Boundary Value Analysis – BVA)
 
-#### Cách 1: Chạy bằng Visual Studio Code
+Các test case được thiết kế để kiểm tra các giá trị tại ranh giới của miền dữ liệu hợp lệ:
 
-1. Cài đặt Extension Pack for Java
-2. Mở file `StudentAnalyzerTest.java`
-3. Nhấn Run Test trên từng phương thức test hoặc trên toàn bộ lớp test
+- Giá trị nhỏ nhất hợp lệ: 0.0
+- Giá trị lớn nhất hợp lệ: 10.0
+- Giá trị ngay dưới biên dưới: -1.0
+- Giá trị ngay trên biên trên: 11.0
+- Biên phân loại excellent: 8.0
+
+Ngoài ra, các giá trị gần biên cũng được kiểm thử như:
+- Min + 1 (1.0)
+- Max − 1 (9.0)
+
+Việc kiểm thử tại các giá trị biên giúp phát hiện các lỗi thường xảy ra ở ranh giới miền dữ liệu.
 
 ---
 
-#### Cách 2: Chạy bằng Terminal
+## 2.3. Kiểm thử bảng quyết định (Decision Table Testing)
 
-Tại thư mục gốc của project, chạy lệnh:
+### Decision Table cho phương thức `calculateValidAverage`
 
+#### Điều kiện
+- C1: Danh sách rỗng?
+- C2: Có ít nhất một điểm hợp lệ?
+
+#### Hành động
+- A1: Trả về trung bình các điểm hợp lệ
+- A2: Trả về 0
+
+| Rule | Danh sách rỗng | Có điểm hợp lệ | Kết quả |
+|------|---------------|---------------|---------|
+| R1   | Không         | Có            | A1      |
+| R2   | Không         | Không         | A2      |
+| R3   | Có            | Không         | A2      |
+
+---
+
+### Decision Table cho phương thức `countExcellentStudents`
+
+#### Điều kiện
+- C1: Danh sách rỗng?
+- C2: Có điểm excellent (≥ 8.0)?
+
+#### Hành động
+- A1: Đếm số lượng học sinh excellent
+- A2: Trả về 0
+
+| Rule | Danh sách rỗng | Có excellent | Kết quả |
+|------|---------------|--------------|---------|
+| R1   | Không         | Có           | A1      |
+| R2   | Không         | Không        | A2      |
+| R3   | Có            | Không        | A2      |
+
+Mỗi test case được thiết kế để đại diện cho một rule cụ thể trong bảng quyết định, giúp thể hiện rõ mối quan hệ giữa điều kiện đầu vào và hành vi của hệ thống.
+
+---
+
+## 3. Kết luận
+
+Bộ test trong dự án đã:
+
+- Áp dụng đầy đủ kỹ thuật phân vùng tương đương
+- Kiểm tra chi tiết các giá trị biên quan trọng
+- Thể hiện rõ logic nghiệp vụ thông qua kiểm thử bảng quyết định
+
+Nhờ đó, chương trình được kiểm thử toàn diện, dễ hiểu và phù hợp với yêu cầu học thuật của môn Kiểm thử phần mềm.
+
+---
+
+## 4. Hướng dẫn chạy test
+
+### Chạy bằng IDE
+Sử dụng chức năng Run Test trong Visual Studio Code hoặc IntelliJ IDEA.
+
+### Chạy bằng dòng lệnh
 ```bash
 mvn test
+
 ```
-
----
-
-### 6. Quản lý công việc với GitHub Issues
-
-Dự án được chia thành các Issue chính như sau:
-
-* Viết hàm `countExcellentStudents()`
-* Viết hàm `calculateValidAverage()`
-* Viết kiểm thử đơn vị cho hai hàm
-* Viết tài liệu README
-
-Mỗi Issue được thực hiện và commit riêng biệt, giúp dễ dàng theo dõi tiến độ và lịch sử thay đổi của dự án.
-
----
-
-### 7. Kết quả đạt được
-
-* Cài đặt và sử dụng JUnit 5 để thực hiện kiểm thử tự động
-* Xây dựng test case cho nhiều tình huống khác nhau (bình thường, biên, không hợp lệ)
-* Áp dụng GitHub Issues và quy ước commit message trong quá trình phát triển
-* Nâng cao hiểu biết về vai trò của kiểm thử đơn vị trong phát triển phần mềm
-
 ---
 
 ## Bài 3: Bài tập thực hành kiểm thử tự động End-to-End với Cypress
